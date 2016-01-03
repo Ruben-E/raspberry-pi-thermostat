@@ -13,6 +13,9 @@ import org.springframework.messaging.MessageHandler;
 
 @Configuration
 public class MqttConfiguration {
+    public static final String MEASUREMENTS_TOPIC = "measurements";
+    public static final String MANUAL_PREFERRED_TEMPERATURES_TOPIC = "manual_preferred_temperatures";
+
     @Bean
     public MessageChannel mqttInputChannel() {
         return new DirectChannel();
@@ -20,7 +23,7 @@ public class MqttConfiguration {
 
     @Bean
     public MessageProducer inbound() {
-        MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter("tcp://192.168.2.8:1883", "testClient", "test");
+        MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter("tcp://192.168.2.8:1883", "testClient", MEASUREMENTS_TOPIC, MANUAL_PREFERRED_TEMPERATURES_TOPIC);
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(1);

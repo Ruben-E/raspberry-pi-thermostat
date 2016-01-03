@@ -6,9 +6,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class RadiatorStatusRepository {
-//    public static final String TABLE_NAME = "overwritten_preferred_temperatures";
+//    public static final String TABLE_NAME = "manual_preferred_temperatures";
 //    public static final String ID_COLUMN = "id";
-//    public static final String OVERWRITTEN_REFERRED_TEMPERATURE_COLUMN = "overwritten_preferred_temperature";
+//    public static final String MANUAL_REFERRED_TEMPERATURE_COLUMN = "manual_preferred_temperature";
 //    public static final String START_COLUMN = "start";
 //    public static final String END_COLUMN = "end";
 //    TODO: Save in database
@@ -26,7 +26,7 @@ public class RadiatorStatusRepository {
         this.currentRadiatorStatus = currentRadiatorStatus;
     }
 
-    //    public OverwrittenPreferredTemperature getCurrentOverwrittenPreferredTemperature() throws RepositoryException {
+    //    public ManualPreferredTemperature findLatest() throws RepositoryException {
 //        try {
 //            Connection connection = rethinkDbConnectionFactory.getConnection();
 //
@@ -35,11 +35,11 @@ public class RadiatorStatusRepository {
 //            }).run(connection);
 //
 //            HashMap next = cursor.next();
-//            OverwrittenPreferredTemperature overwrittenPreferredTemperature = new OverwrittenPreferredTemperature((Float) next.get(OVERWRITTEN_REFERRED_TEMPERATURE_COLUMN));
+//            ManualPreferredTemperature manualPreferredTemperature = new ManualPreferredTemperature((Integer) next.get(MANUAL_REFERRED_TEMPERATURE_COLUMN));
 //
 //            connection.close();
 //
-//            return overwrittenPreferredTemperature;
+//            return manualPreferredTemperature;
 //        } catch (Exception e) {
 //            throw new RepositoryException(e);
 //        }

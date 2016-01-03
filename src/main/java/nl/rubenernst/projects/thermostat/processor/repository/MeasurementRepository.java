@@ -44,7 +44,7 @@ public class MeasurementRepository {
         }
     }
 
-    public ClimateMeasurement getLatestByType(ClimateType climateType) {
+    public ClimateMeasurement findLatestByType(ClimateType climateType) {
         if (climateType.equals(ClimateType.TEMPERATURE)) {
             return latestTemperature;
         }

@@ -7,7 +7,7 @@ import nl.rubenernst.projects.thermostat.processor.exceptions.InvalidMeasurement
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ClimateMeasurementMapper {
+class ClimateMeasurementMapper {
     private static final String VALID_MEASUREMENT = "^\\|(.+)\\|(.+)\\|(\\d{4})\\|$";
 
     public static ClimateMeasurement convertToClimateMeasurement(String measurement) throws InvalidMeasurement {

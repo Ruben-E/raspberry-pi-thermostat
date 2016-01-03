@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import nl.rubenernst.projects.thermostat.processor.domain.*;
 import nl.rubenernst.projects.thermostat.processor.exceptions.RepositoryException;
 import nl.rubenernst.projects.thermostat.processor.repository.MeasurementRepository;
-import nl.rubenernst.projects.thermostat.processor.repository.OverwrittenPreferredTemperatureRepository;
+import nl.rubenernst.projects.thermostat.processor.repository.ManualPreferredTemperatureRepository;
 import nl.rubenernst.projects.thermostat.processor.repository.RadiatorStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +17,7 @@ public class ThermostatService {
     private RadiatorStatusRepository radiatorStatusRepository;
 
     @Autowired
-    private OverwrittenPreferredTemperatureRepository overwrittenPreferredTemperatureRepository;
+    private ManualPreferredTemperatureRepository manualPreferredTemperatureRepository;
 
     @Autowired
     private MeasurementRepository measurementRepository;
@@ -34,7 +34,7 @@ public class ThermostatService {
     @Value("${preferred.temperature.offset.upper}")
     private int upperOffset;
 
-    public RadiatorStatus getRadiatorStatus() {
+    private RadiatorStatus getRadiatorStatus() {
         try {
             return radiatorStatusRepository.findLatest();
         } catch (RepositoryException e) {
@@ -44,7 +44,7 @@ public class ThermostatService {
         }
     }
 
-    public void turnOnRadiator() {
+    private void turnOnRadiator() {
         try {
             //TODO: Send event
             radiatorStatusRepository.save(RadiatorStatus.ON);
@@ -53,7 +53,7 @@ public class ThermostatService {
         }
     }
 
-    public void turnOffRadiator() {
+    private void turnOffRadiator() {
         try {
             //TODO: Send event
             radiatorStatusRepository.save(RadiatorStatus.OFF);
@@ -62,25 +62,25 @@ public class ThermostatService {
         }
     }
 
-    public PreferredTemperature getCurrentPreferredTemperature() {
+    private PreferredTemperature getCurrentPreferredTemperature() {
         // TODO: It only supports the latest preferred temperature
         // TODO: Also support a schedule
 
         try {
-            OverwrittenPreferredTemperature currentOverwrittenPreferredTemperature = overwrittenPreferredTemperatureRepository.getCurrentOverwrittenPreferredTemperature();
-            return new PreferredTemperature(currentOverwrittenPreferredTemperature.getTemperature());
+            ManualPreferredTemperature currentManualPreferredTemperature = manualPreferredTemperatureRepository.findLatest();
+            return new PreferredTemperature(currentManualPreferredTemperature.getTemperature());
         } catch (RepositoryException e) {
-            log.warn("Could not get the overwritten preferred temperature. Returning the default preferred temperature: " + defaultPreferredTemperature);
+            log.warn("Could not get the manual preferred temperature. Returning the default preferred temperature: " + defaultPreferredTemperature);
 
             return new PreferredTemperature(defaultPreferredTemperature);
         }
     }
 
-    public void toggleRadiatorIfNeeded() {
+    private void toggleRadiatorIfNeeded() {
         try {
             RadiatorStatus radiatorStatus = getRadiatorStatus();
             PreferredTemperature currentPreferredTemperature = getCurrentPreferredTemperature();
-            ClimateMeasurement currentTemperature = measurementRepository.getLatestByType(ClimateType.TEMPERATURE);
+            ClimateMeasurement currentTemperature = measurementRepository.findLatestByType(ClimateType.TEMPERATURE);
             int lowerThreshold = currentPreferredTemperature.getTemperature() - lowerOffset;
             int upperThreshold = currentPreferredTemperature.getTemperature() - upperOffset;
 
@@ -107,6 +107,8 @@ public class ThermostatService {
     public void handleMeasurement(ClimateMeasurement climateMeasurement) {
         try {
             measurementRepository.save(climateMeasurement);
+
+            toggleRadiatorIfNeeded();
         } catch (RepositoryException e) {
             log.warn("Could not save the measurement to the database: " + climateMeasurement + ". Ignoring to be resilient.", e);
         }
