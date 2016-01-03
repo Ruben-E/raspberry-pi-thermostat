@@ -8,7 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ClimateMeasurementMapper {
-    private static final String VALID_MEASUREMENT = "^\\|(.+)\\|(.+)\\|(\\d+\\.?\\d*)\\|$";
+    private static final String VALID_MEASUREMENT = "^\\|(.+)\\|(.+)\\|(\\d{4})\\|$";
 
     public static ClimateMeasurement convertToClimateMeasurement(String measurement) throws InvalidMeasurement {
         Pattern pattern = Pattern.compile(VALID_MEASUREMENT);
@@ -18,7 +18,7 @@ public class ClimateMeasurementMapper {
             try {
                 String room = matcher.group(1);
                 String type = matcher.group(2);
-                Float value = Float.parseFloat(matcher.group(3));
+                int value = Integer.parseInt(matcher.group(3));
 
                 ClimateType climateType = ClimateType.valueOf(type);
                 return new ClimateMeasurement(room, climateType, value);

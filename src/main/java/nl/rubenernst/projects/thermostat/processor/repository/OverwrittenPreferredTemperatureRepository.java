@@ -27,7 +27,7 @@ public class OverwrittenPreferredTemperatureRepository {
 //    }
 //    TODO: Save in database
 
-    private OverwrittenPreferredTemperature currentOverwrittenPreferredTemperature = new OverwrittenPreferredTemperature(19.5f);
+    private OverwrittenPreferredTemperature currentOverwrittenPreferredTemperature = new OverwrittenPreferredTemperature(1950);
 
     public OverwrittenPreferredTemperature getCurrentOverwrittenPreferredTemperature() throws RepositoryException{
         return currentOverwrittenPreferredTemperature;

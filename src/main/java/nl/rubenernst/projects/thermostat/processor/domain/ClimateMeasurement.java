@@ -6,5 +6,5 @@ import lombok.Data;
 public class ClimateMeasurement {
     private final String room;
     private final ClimateType type;
-    private final float value;
+    private final int value;
 }

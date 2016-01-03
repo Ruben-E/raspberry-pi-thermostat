@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class PreferredTemperature {
-    private final float temperature;
+    private final int temperature;
 }

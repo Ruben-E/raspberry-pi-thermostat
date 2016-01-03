@@ -18,11 +18,15 @@ public class RadiatorStatusRepository {
 
     private RadiatorStatus currentRadiatorStatus = RadiatorStatus.OFF;
 
-    public RadiatorStatus getCurrentRadiatorStatus() throws RepositoryException {
+    public RadiatorStatus findLatest() throws RepositoryException {
         return currentRadiatorStatus;
     }
 
-//    public OverwrittenPreferredTemperature getCurrentOverwrittenPreferredTemperature() throws RepositoryException {
+    public void save(RadiatorStatus currentRadiatorStatus) throws RepositoryException {
+        this.currentRadiatorStatus = currentRadiatorStatus;
+    }
+
+    //    public OverwrittenPreferredTemperature getCurrentOverwrittenPreferredTemperature() throws RepositoryException {
 //        try {
 //            Connection connection = rethinkDbConnectionFactory.getConnection();
 //

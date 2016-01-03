@@ -3,6 +3,7 @@ package nl.rubenernst.projects.thermostat.processor.repository;
 import com.rethinkdb.RethinkDB;
 import com.rethinkdb.net.Connection;
 import nl.rubenernst.projects.thermostat.processor.domain.ClimateMeasurement;
+import nl.rubenernst.projects.thermostat.processor.domain.ClimateType;
 import nl.rubenernst.projects.thermostat.processor.exceptions.RepositoryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -15,7 +16,19 @@ public class MeasurementRepository {
     @Autowired
     private int rethinkDbPort;
 
+    private ClimateMeasurement latestTemperature;
+
+    private ClimateMeasurement latestHumidity;
+
     public void save(ClimateMeasurement climateMeasurement) throws RepositoryException {
+        if (climateMeasurement.getType().equals(ClimateType.TEMPERATURE)) {
+            latestTemperature = climateMeasurement;
+        }
+
+        if (climateMeasurement.getType().equals(ClimateType.HUMIDITY)) {
+            latestHumidity = climateMeasurement;
+        }
+
         try {
             Connection connection = RethinkDB.r.connection().hostname(rethinkDbHost).port(rethinkDbPort).connect();
 
@@ -29,5 +42,17 @@ public class MeasurementRepository {
         } catch (Exception e) {
             throw new RepositoryException(e);
         }
+    }
+
+    public ClimateMeasurement getLatestByType(ClimateType climateType) {
+        if (climateType.equals(ClimateType.TEMPERATURE)) {
+            return latestTemperature;
+        }
+
+        if (climateType.equals(ClimateType.HUMIDITY)) {
+            return latestHumidity;
+        }
+
+        return null;
     }
 }

@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class OverwrittenPreferredTemperature {
-    private final float temperature;
+    private final int temperature;
 }

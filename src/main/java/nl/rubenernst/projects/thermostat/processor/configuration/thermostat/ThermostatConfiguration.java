@@ -10,19 +10,4 @@ public class ThermostatConfiguration {
     public RadiatorStatus defaultRadiatorStatus() {
         return RadiatorStatus.OFF;
     }
-
-    @Bean
-    public int defaultPreferredTemperature() {
-        return 1950;
-    }
-
-    @Bean
-    public int lowerThreshold() {
-        return 30;
-    }
-
-    @Bean
-    public int upperThreshold() {
-        return 30;
-    }
 }
