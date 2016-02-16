@@ -1,6 +1,7 @@
 package nl.rubenernst.projects.thermostat.processor.configuration.mqtt;
 
 import nl.rubenernst.projects.thermostat.processor.handler.MeasurementHandler;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.annotation.MessagingGateway;
@@ -46,18 +47,18 @@ public class MqttConfiguration {
 
     @Bean
     @ServiceActivator(inputChannel = "mqttOutboundChannel")
-    public MessageHandler outbound() {
+    public MessageHandler outbound(MqttPahoClientFactory mqttClientFactory) {
         MqttPahoMessageHandler messageHandler =
-                new MqttPahoMessageHandler("testClient", mqttClientFactory());
+                new MqttPahoMessageHandler("testClient", mqttClientFactory);
         messageHandler.setAsync(true);
         messageHandler.setDefaultTopic(RADIATOR_STATUSES_TOPIC);
         return messageHandler;
     }
 
     @Bean
-    public MqttPahoClientFactory mqttClientFactory() {
+    public MqttPahoClientFactory mqttClientFactory(@Value("mqtt.uri") String mqttUri) {
         DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
-        factory.setServerURIs("tcp://192.168.2.8:1883");
+        factory.setServerURIs(mqttUri);
         return factory;
     }
 
