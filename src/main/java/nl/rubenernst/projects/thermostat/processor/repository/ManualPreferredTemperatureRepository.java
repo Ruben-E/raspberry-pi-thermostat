@@ -2,10 +2,14 @@ package nl.rubenernst.projects.thermostat.processor.repository;
 
 import nl.rubenernst.projects.thermostat.processor.domain.ManualPreferredTemperature;
 import nl.rubenernst.projects.thermostat.processor.exceptions.RepositoryException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class ManualPreferredTemperatureRepository {
+    @Value("${preferred.temperature.default}")
+    private int defaultPreferredTemperature;
+
 //    public static final String TABLE_NAME = "manual_preferred_temperatures";
 //    public static final String END_COLUMN = "end";
 //
@@ -27,13 +31,13 @@ public class ManualPreferredTemperatureRepository {
 //    }
 //    TODO: Save in database
 
-    private ManualPreferredTemperature currentManualPreferredTemperature = new ManualPreferredTemperature(1950);
+    private ManualPreferredTemperature currentManualPreferredTemperature = new ManualPreferredTemperature("living", defaultPreferredTemperature);
 
-    public ManualPreferredTemperature findLatest() throws RepositoryException{
+    public ManualPreferredTemperature findLatest() throws RepositoryException {
         return currentManualPreferredTemperature;
     }
 
-    public void save(ManualPreferredTemperature manualPreferredTemperature) {
+    public void save(ManualPreferredTemperature manualPreferredTemperature) throws RepositoryException {
         currentManualPreferredTemperature = manualPreferredTemperature;
     }
 }

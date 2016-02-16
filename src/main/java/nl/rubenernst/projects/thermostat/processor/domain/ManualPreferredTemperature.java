@@ -4,5 +4,6 @@ import lombok.Data;
 
 @Data
 public class ManualPreferredTemperature {
+    private final String room;
     private final int temperature;
 }

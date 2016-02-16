@@ -1,6 +1,7 @@
 package nl.rubenernst.projects.thermostat.processor.service;
 
 import lombok.extern.slf4j.Slf4j;
+import nl.rubenernst.projects.thermostat.processor.configuration.mqtt.MqttConfiguration;
 import nl.rubenernst.projects.thermostat.processor.domain.*;
 import nl.rubenernst.projects.thermostat.processor.exceptions.RepositoryException;
 import nl.rubenernst.projects.thermostat.processor.repository.MeasurementRepository;
@@ -25,6 +26,9 @@ public class ThermostatService {
     @Autowired
     private RadiatorStatus defaultRadiatorStatus;
 
+    @Autowired
+    private MqttConfiguration.Gateway gateway;
+
     @Value("${preferred.temperature.default}")
     private int defaultPreferredTemperature;
 
@@ -46,8 +50,10 @@ public class ThermostatService {
 
     private void turnOnRadiator() {
         try {
-            //TODO: Send event
+            log.info("Turning the radiator ON");
+
             radiatorStatusRepository.save(RadiatorStatus.ON);
+            gateway.sendToMqtt(RadiatorStatus.ON.name());
         } catch (RepositoryException e) {
             log.warn("Could not turn on the radiator", e);
         }
@@ -55,8 +61,10 @@ public class ThermostatService {
 
     private void turnOffRadiator() {
         try {
-            //TODO: Send event
+            log.info("Turning the radiator OFF");
+
             radiatorStatusRepository.save(RadiatorStatus.OFF);
+            gateway.sendToMqtt(RadiatorStatus.OFF.name());
         } catch (RepositoryException e) {
             log.warn("Could not turn on the radiator", e);
         }
@@ -68,6 +76,9 @@ public class ThermostatService {
 
         try {
             ManualPreferredTemperature currentManualPreferredTemperature = manualPreferredTemperatureRepository.findLatest();
+
+            log.debug("Preferred temperature: {}" + currentManualPreferredTemperature.getTemperature());
+
             return new PreferredTemperature(currentManualPreferredTemperature.getTemperature());
         } catch (RepositoryException e) {
             log.warn("Could not get the manual preferred temperature. Returning the default preferred temperature: " + defaultPreferredTemperature);
@@ -111,6 +122,18 @@ public class ThermostatService {
             toggleRadiatorIfNeeded();
         } catch (RepositoryException e) {
             log.warn("Could not save the measurement to the database: " + climateMeasurement + ". Ignoring to be resilient.", e);
+        }
+    }
+
+    public void handleManualPreferredTemperature(ManualPreferredTemperature manualPreferredTemperature) {
+        try {
+            manualPreferredTemperatureRepository.save(manualPreferredTemperature);
+
+            toggleRadiatorIfNeeded();
+        } catch (RepositoryException e) {
+            log.warn("Could not save the manual preferred temperature to the database: " + manualPreferredTemperature + ".", e);
+
+            //TODO: Send failed event
         }
     }
 }

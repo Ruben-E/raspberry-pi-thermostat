@@ -2,15 +2,16 @@ package nl.rubenernst.projects.thermostat.processor.handler;
 
 import nl.rubenernst.projects.thermostat.processor.domain.ClimateMeasurement;
 import nl.rubenernst.projects.thermostat.processor.domain.ClimateType;
-import nl.rubenernst.projects.thermostat.processor.exceptions.InvalidMeasurement;
+import nl.rubenernst.projects.thermostat.processor.exceptions.InvalidPayload;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class ClimateMeasurementMapper {
     private static final String VALID_MEASUREMENT = "^\\|(.+)\\|(.+)\\|(\\d{4})\\|$";
+//    private static final String VALID_MEASUREMENT = "^\\|(.+)\\|(.+)\\|$";
 
-    public static ClimateMeasurement convertToClimateMeasurement(String measurement) throws InvalidMeasurement {
+    public static ClimateMeasurement convertToClimateMeasurement(String measurement) throws InvalidPayload {
         Pattern pattern = Pattern.compile(VALID_MEASUREMENT);
         Matcher matcher = pattern.matcher(measurement);
 
@@ -23,10 +24,10 @@ class ClimateMeasurementMapper {
                 ClimateType climateType = ClimateType.valueOf(type);
                 return new ClimateMeasurement(room, climateType, value);
             } catch (Exception e) {
-                throw new InvalidMeasurement();
+                throw new InvalidPayload("Payload is valid: " + measurement);
             }
         } else {
-            throw new InvalidMeasurement();
+            throw new InvalidPayload("Payload is valid: " + measurement);
         }
     }
 }

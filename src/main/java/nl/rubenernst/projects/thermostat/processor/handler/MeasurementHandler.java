@@ -3,7 +3,8 @@ package nl.rubenernst.projects.thermostat.processor.handler;
 import lombok.extern.slf4j.Slf4j;
 import nl.rubenernst.projects.thermostat.processor.configuration.mqtt.MqttConfiguration;
 import nl.rubenernst.projects.thermostat.processor.domain.ClimateMeasurement;
-import nl.rubenernst.projects.thermostat.processor.exceptions.InvalidMeasurement;
+import nl.rubenernst.projects.thermostat.processor.domain.ManualPreferredTemperature;
+import nl.rubenernst.projects.thermostat.processor.exceptions.InvalidPayload;
 import nl.rubenernst.projects.thermostat.processor.service.ThermostatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
@@ -31,19 +32,28 @@ public class MeasurementHandler implements MessageHandler {
     }
 
     private void handleManualPreferredTemperatureMessage(Message<?> message) {
+        String payload = (String) message.getPayload();
 
+        try {
+            ManualPreferredTemperature manualPreferredTemperature = ManualPreferredTemperatureMapper.convertToManualPreferredTemperature(payload);
+            thermostatService.handleManualPreferredTemperature(manualPreferredTemperature);
+        } catch (InvalidPayload invalidPayload) {
+            log.warn("Invalid payload: " + payload);
+
+            throw new MessagingException("Invalid payload: " + payload, invalidPayload);
+        }
     }
 
     private void handleMeasurementMessage(Message<?> message) {
-        String measurement = (String) message.getPayload();
+        String payload = (String) message.getPayload();
 
         try {
-            ClimateMeasurement climateMeasurement = ClimateMeasurementMapper.convertToClimateMeasurement(measurement);
+            ClimateMeasurement climateMeasurement = ClimateMeasurementMapper.convertToClimateMeasurement(payload);
             thermostatService.handleMeasurement(climateMeasurement);
-        } catch (InvalidMeasurement invalidMeasurement) {
-            log.warn("Invalid measurement: " + measurement);
+        } catch (InvalidPayload invalidPayload) {
+            log.warn("Invalid payload: " + payload);
 
-            throw new MessagingException("Invalid measurement: " + measurement, invalidMeasurement);
+            throw new MessagingException("Invalid payload: " + payload, invalidPayload);
         }
     }
 }
