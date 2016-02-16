@@ -8,8 +8,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class ClimateMeasurementMapper {
-    private static final String VALID_MEASUREMENT = "^\\|(.+)\\|(.+)\\|(\\d{4})\\|$";
-//    private static final String VALID_MEASUREMENT = "^\\|(.+)\\|(.+)\\|$";
+//    private static final String VALID_MEASUREMENT = "^\\|(.+)\\|(.+)\\|(\\d{4})\\|$";
+    private static final String VALID_MEASUREMENT = "^\\|(.+)\\|(.+)\\|$";
 
     public static ClimateMeasurement convertToClimateMeasurement(String measurement) throws InvalidPayload {
         Pattern pattern = Pattern.compile(VALID_MEASUREMENT);
@@ -17,12 +17,15 @@ class ClimateMeasurementMapper {
 
         if (matcher.matches()) {
             try {
-                String room = matcher.group(1);
-                String type = matcher.group(2);
-                int value = Integer.parseInt(matcher.group(3));
+                String temperatureString = matcher.group(1);
+                String strippedTemperatureString = temperatureString.replace(".", "");
+                int temperature = Integer.valueOf(strippedTemperatureString);
 
-                ClimateType climateType = ClimateType.valueOf(type);
-                return new ClimateMeasurement(room, climateType, value);
+                // Ignored for now
+                String humidity = matcher.group(2);
+
+                ClimateType climateType = ClimateType.TEMPERATURE;
+                return new ClimateMeasurement(null, climateType, temperature);
             } catch (Exception e) {
                 throw new InvalidPayload("Payload is valid: " + measurement);
             }

@@ -6,16 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class RadiatorStatusRepository {
-//    public static final String TABLE_NAME = "manual_preferred_temperatures";
-//    public static final String ID_COLUMN = "id";
-//    public static final String MANUAL_REFERRED_TEMPERATURE_COLUMN = "manual_preferred_temperature";
-//    public static final String START_COLUMN = "start";
-//    public static final String END_COLUMN = "end";
-//    TODO: Save in database
-
-//    @Autowired
-//    private RethinkDbConnectionFactory rethinkDbConnectionFactory;
-
     private RadiatorStatus currentRadiatorStatus = RadiatorStatus.OFF;
 
     public RadiatorStatus findLatest() throws RepositoryException {
@@ -25,23 +15,4 @@ public class RadiatorStatusRepository {
     public void save(RadiatorStatus currentRadiatorStatus) throws RepositoryException {
         this.currentRadiatorStatus = currentRadiatorStatus;
     }
-
-    //    public ManualPreferredTemperature findLatest() throws RepositoryException {
-//        try {
-//            Connection connection = rethinkDbConnectionFactory.getConnection();
-//
-//            Cursor<HashMap> cursor = RethinkDB.r.table(TABLE_NAME).filter(row -> {
-//                return row.g(END_COLUMN).eq(null);
-//            }).run(connection);
-//
-//            HashMap next = cursor.next();
-//            ManualPreferredTemperature manualPreferredTemperature = new ManualPreferredTemperature((Integer) next.get(MANUAL_REFERRED_TEMPERATURE_COLUMN));
-//
-//            connection.close();
-//
-//            return manualPreferredTemperature;
-//        } catch (Exception e) {
-//            throw new RepositoryException(e);
-//        }
-//    }
 }
